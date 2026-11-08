@@ -105,14 +105,7 @@ h1,h2{font-family:Mitr, Sarabun, sans-serif; font-weight:500}
 .tab-add{border-style:dashed; border-color:var(--accent); color:var(--accent); background:transparent}
 .tab-add:hover{background:var(--accent-soft)}
 
-/* Scroll arrows for the tab row (shown only when tabs overflow) */
-.tabs-wrap{position:relative; min-width:0}
-.tab-arrow{position:absolute; top:6px; z-index:2; width:36px; height:36px; min-height:36px; padding:0; border-radius:50%; display:grid; place-items:center; background:var(--surface); border:1.5px solid var(--line); color:var(--fg); box-shadow:var(--shadow)}
-/* Tabs now wrap onto new lines, so the scroll arrows are never needed */
-.tab-arrow{display:none !important}
-.tab-arrow.left{left:0}
-.tab-arrow.right{right:0}
-.tab-arrow[hidden]{display:none}
+.tabs-wrap{min-width:0}
 
 /* Card and items */
 .card{background:var(--surface); border-radius:22px; box-shadow:var(--shadow); padding:8px 16px 16px; margin-bottom:14px; min-width:0}
@@ -221,15 +214,7 @@ footer{color:var(--muted); font-size:.84rem; text-align:center; padding:12px 0 2
     <div><strong>ก่อนเตรียมของ:</strong> ถามโรงพยาบาลที่ฝากครรภ์ว่ามีอะไรให้แล้วบ้าง เช่น นมผง ผ้าอ้อม หรือชุดเด็ก เพราะแต่ละที่ไม่เหมือนกัน</div>
   </div>
 
-  <div class="tabs-wrap">
-    <button type="button" class="tab-arrow left" id="tabs-left" aria-label="เลื่อนหมวดไปทางซ้าย" hidden>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
-    </button>
-    <nav class="tabs" id="tabs" role="tablist" aria-label="หมวดหมู่ของที่ต้องเตรียม"></nav>
-    <button type="button" class="tab-arrow right" id="tabs-right" aria-label="เลื่อนหมวดไปทางขวา" hidden>
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
-    </button>
-  </div>
+  <nav class="tabs" id="tabs" role="tablist" aria-label="หมวดหมู่ของที่ต้องเตรียม"></nav>
 
   <button type="button" id="add-section" class="add-open" style="margin:0 0 14px">
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
@@ -301,7 +286,10 @@ const ICON_LABELS = { doc: "เอกสาร", heart: "หัวใจ", baby:
 const TRASH_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>';
 const PLUS_ICON = '<path d="M12 5v14"/><path d="M5 12h14"/>';
 
-const DEFAULT_SECTIONS = []
+// No starter sections on first visit. The user adds their own with the "เพิ่มหมวดหมู่ใหม่" button.
+const DEFAULT_SECTIONS = [];
+
+// Birth-registration sections, added once to every saved state (existing and new).
 const EXTRA_SECTIONS = [
   { id: "birth-reg", title: "แจ้งเกิดเข้าบ้าน", icon: "doc", items: [
     ["สำเนาบัตรประชาชน พ่อ", "2 ชุด"],
@@ -384,13 +372,13 @@ const EXTRA_SECTIONS = [
     ["บัตรประชาชนตัวจริง", "ผู้ใช้สิทธิ์"],
     ["สำเนาบัตรประชาชนพ่อ", "3 ชุด · กรณีใช้สิทธิ์พ่อ"],
     ["สำเนาทะเบียนสมรส", "3 ชุด · กรณีใช้สิทธิ์พ่อ"],
-    ["แบบฟอร์มคำร้อง ดร.1", ""],
-    ["แบบฟอร์มคำร้อง ดร.2", ""],
+    ["แบบฟอร์มคำร้อง ดร.1", "ตรวจชื่อแบบฟอร์มกับสำนักงานประกันสังคมก่อนยื่น"],
+    ["แบบฟอร์มคำร้อง ดร.2", "ตรวจชื่อแบบฟอร์มกับสำนักงานประกันสังคมก่อนยื่น"],
     ["สำเนาบัตรประชาชนผู้ปกครอง", "1 ชุด"],
     ["สำเนาสูติบัตรบุตร", "1 ชุด"],
     ["ใบสูติบัตรตัวจริง", ""],
-    ["สมุดธนาคารกรุงไทย", ""],
-    ["สำเนาหน้าสมุดธนาคารกรุงไทย", ""]
+    ["สมุดธนาคารกรุงไทย", "ใช้รับเงินสงเคราะห์บุตร"],
+    ["สำเนาหน้าสมุดธนาคารกรุงไทย", "ใช้รับเงินสงเคราะห์บุตร"]
   ]}
 ];
 
@@ -608,7 +596,6 @@ function renderTabs() {
     if (sel) sel.scrollIntoView({ inline: "nearest", block: "nearest" });
     lastScrolledId = activeId;
   }
-  updateTabArrows();
 }
 
 function buildItemRow(sec, it) {
@@ -920,21 +907,7 @@ document.getElementById("add-section").addEventListener("click", (e) => {
   openSectionDialog(e.currentTarget);
 });
 
-const tabsLeftBtn = document.getElementById("tabs-left");
-const tabsRightBtn = document.getElementById("tabs-right");
 let lastScrolledId = null;
-
-function updateTabArrows() {
-  const max = tabsEl.scrollWidth - tabsEl.clientWidth;
-  const overflow = max > 2;
-  tabsLeftBtn.hidden = !overflow || tabsEl.scrollLeft <= 2;
-  tabsRightBtn.hidden = !overflow || tabsEl.scrollLeft >= max - 2;
-}
-
-tabsEl.addEventListener("scroll", updateTabArrows, { passive: true });
-window.addEventListener("resize", updateTabArrows);
-tabsLeftBtn.addEventListener("click", () => tabsEl.scrollBy({ left: -180, behavior: "smooth" }));
-tabsRightBtn.addEventListener("click", () => tabsEl.scrollBy({ left: 180, behavior: "smooth" }));
 
 storageOK = canUseStorage();
 render();
