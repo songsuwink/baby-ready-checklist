@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="เช็คลิสต์กระเป๋าไปคลอดที่โรงพยาบาล เพิ่มหรือลบหมวดและรายการได้ตามต้องการ">
+<title>เช็คลิสต์และของใช้ต่างๆ ก่อนคลอด</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Mitr:wght@400;500;600&family=Sarabun:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#FFFFFF;
+  --surface:#FFFFFF;
+  --fg:#1E2330;
+  --muted:#6B7280;
+  --accent:#4F5BD5;
+  --accent-hover:#3F4AC2;
+  --accent-2:#14A38B;
+  --accent-soft:#EEF0FF;
+  --mint-soft:#E7F7F3;
+  --line:#E6E8EF;
+  --shadow:0 6px 18px rgba(30,35,60,.07);
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#121420;
+    --surface:#1B1E2C;
+    --fg:#EEF0F8;
+    --muted:#9AA1B8;
+    --accent:#8F97F5;
+    --accent-hover:#A7AEFA;
+    --accent-2:#4FD1B8;
+    --accent-soft:#262A48;
+    --mint-soft:#173A36;
+    --line:#2B3044;
+    --shadow:0 6px 18px rgba(0,0,0,.3);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#121420;
+  --surface:#1B1E2C;
+  --fg:#EEF0F8;
+  --muted:#9AA1B8;
+  --accent:#8F97F5;
+  --accent-hover:#A7AEFA;
+  --accent-2:#4FD1B8;
+  --accent-soft:#262A48;
+  --mint-soft:#173A36;
+  --line:#2B3044;
+  --shadow:0 6px 18px rgba(0,0,0,.3);
+  color-scheme: dark;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  background-color:var(--bg); color:var(--fg);
+  /* Light decorative pattern (hearts, stars, clouds, moon) tiled over the page */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'%3E%3Cg fill='none' stroke='rgb(79,91,213)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' opacity='0.16'%3E%3Cpath d='M40 52c-10-8-18-14-18-22a8 8 0 0 1 18-4a8 8 0 0 1 18 4c0 8-8 14-18 22z'/%3E%3Cpath d='M180 36l4 9 9 1-7 6 2 9-8-5-8 5 2-9-7-6 9-1z'/%3E%3Cpath d='M104 146h30a8 8 0 0 0 0-16a10 10 0 0 0-19-4a8 8 0 0 0-11 20z'/%3E%3Cpath d='M56 176a14 14 0 1 0 14 22a11 11 0 0 1-14-22z'/%3E%3C/g%3E%3Ccircle cx='190' cy='200' r='4' fill='rgb(20,163,139)' opacity='0.2'/%3E%3Ccircle cx='150' cy='110' r='3' fill='rgb(79,91,213)' opacity='0.2'/%3E%3C/svg%3E");
+  background-repeat:repeat;
+  font-family:Sarabun, "Noto Sans Thai", system-ui, sans-serif; font-size:16px; line-height:1.6;
+  min-height:100vh; display:flex; flex-direction:column;
+  padding-left:max(16px, env(safe-area-inset-left, 0px));
+  padding-right:max(16px, env(safe-area-inset-right, 0px));
+}
+main{padding-block:20px 12px; flex:1}
+.wrap{max-width:640px; margin:0 auto; min-width:0}
+h1,h2{font-family:Mitr, Sarabun, sans-serif; font-weight:500}
+
+/* Header */
+.hero{display:flex; align-items:center; gap:14px; margin:4px 0 18px}
+.hero-icon{flex:none; width:52px; height:52px; border-radius:18px; background:var(--accent-soft); color:var(--accent); display:grid; place-items:center}
+.hero h1{font-size:1.5rem; line-height:1.25; margin:0; text-wrap:balance}
+.hero p{margin:2px 0 0; color:var(--muted); font-size:.92rem}
+
+/* Progress card */
+.progress{position:sticky; top:env(safe-area-inset-top, 0px); z-index:5; background:var(--surface); border-radius:20px; box-shadow:var(--shadow); padding:16px 18px; margin-bottom:14px}
+.progress-top{display:flex; justify-content:space-between; align-items:flex-end; gap:12px}
+.progress-label{color:var(--muted); font-size:.92rem}
+.progress-pct{font-family:Mitr, sans-serif; font-size:1.8rem; line-height:1; color:var(--accent); font-variant-numeric:tabular-nums}
+.progress-count{font-variant-numeric:tabular-nums; font-weight:600}
+.track{height:12px; border-radius:999px; background:var(--line); overflow:hidden; margin-top:12px}
+.fill{height:100%; width:0%; border-radius:999px; background:linear-gradient(90deg, var(--accent), var(--accent-2)); transition:width .35s ease}
+@media (prefers-reduced-motion: reduce){ .fill{transition:none} }
+.done-msg{display:none; margin:10px 0 0; font-size:.92rem; color:var(--accent-2); font-weight:600}
+.done-msg.show{display:block}
+.save-status{font-size:.8rem; color:var(--muted); margin:10px 0 0}
+.save-status.warn{color:var(--accent)}
+
+.note{display:flex; gap:10px; align-items:flex-start; background:var(--mint-soft); border-radius:16px; padding:12px 14px; font-size:.92rem; margin:0 0 16px}
+.note svg{flex:none; margin-top:2px; color:var(--accent-2)}
+.note strong{color:var(--fg)}
+
+/* Tabs */
+.tabs{display:flex; flex-wrap:wrap; gap:8px; padding:2px 0 12px; margin:0}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex:none; display:flex; align-items:center; gap:8px; font:inherit; font-size:.95rem; font-weight:600; min-height:44px; padding:8px 14px 8px 10px; border-radius:999px; border:1.5px solid var(--line); background:var(--surface); color:var(--fg); cursor:pointer; white-space:nowrap; transition:background .15s, color .15s, border-color .15s}
+.tab-icon{display:grid; place-items:center; width:28px; height:28px; border-radius:50%; background:var(--accent-soft); color:var(--accent)}
+.tab-count{font-size:.8rem; font-weight:600; padding:1px 8px; border-radius:999px; background:var(--line); color:var(--muted); font-variant-numeric:tabular-nums}
+.tab[aria-selected="true"]{background:var(--accent); border-color:var(--accent); color:#fff}
+.tab[aria-selected="true"] .tab-icon{background:rgba(255,255,255,.25); color:#fff}
+.tab[aria-selected="true"] .tab-count{background:rgba(255,255,255,.25); color:#fff}
+.tab:focus-visible{outline:3px solid var(--accent-2); outline-offset:2px}
+.tab-add{border-style:dashed; border-color:var(--accent); color:var(--accent); background:transparent}
+.tab-add:hover{background:var(--accent-soft)}
+
+/* Scroll arrows for the tab row (shown only when tabs overflow) */
+.tabs-wrap{position:relative; min-width:0}
+.tab-arrow{position:absolute; top:6px; z-index:2; width:36px; height:36px; min-height:36px; padding:0; border-radius:50%; display:grid; place-items:center; background:var(--surface); border:1.5px solid var(--line); color:var(--fg); box-shadow:var(--shadow)}
+/* Tabs now wrap onto new lines, so the scroll arrows are never needed */
+.tab-arrow{display:none !important}
+.tab-arrow.left{left:0}
+.tab-arrow.right{right:0}
+.tab-arrow[hidden]{display:none}
+
+/* Card and items */
+.card{background:var(--surface); border-radius:22px; box-shadow:var(--shadow); padding:8px 16px 16px; margin-bottom:14px; min-width:0}
+.card-head{display:flex; align-items:center; justify-content:space-between; gap:10px; padding:12px 4px 8px}
+.card-head h2{font-size:1.15rem; margin:0}
+.card-head .head-sub{font-size:.82rem; color:var(--muted)}
+.empty{color:var(--muted); text-align:center; padding:32px 12px}
+
+.row{display:flex; align-items:center; gap:6px; margin-top:6px; min-width:0}
+.item{display:flex; flex:1; min-width:0; gap:12px; align-items:center; min-height:56px; padding:10px 12px; border-radius:16px; cursor:pointer; transition:background .15s}
+.item:hover{background:var(--bg)}
+.item input{appearance:none; -webkit-appearance:none; flex:none; width:24px; height:24px; margin:0; border-radius:8px; border:2px solid var(--muted); background:var(--surface); cursor:pointer; display:grid; place-content:center; transition:background .15s, border-color .15s}
+.item input::before{content:""; width:12px; height:7px; border-left:3px solid #fff; border-bottom:3px solid #fff; transform:rotate(-45deg) scale(0); transition:transform .15s}
+.item input:checked{background:var(--accent-2); border-color:var(--accent-2)}
+.item input:checked::before{transform:rotate(-45deg) scale(1)}
+.item input:focus-visible{outline:3px solid var(--accent-2); outline-offset:2px}
+.item.done{background:var(--mint-soft)}
+.item-text{min-width:0; overflow-wrap:anywhere}
+.item-text span{font-weight:500}
+.item-text small{display:block; color:var(--muted); font-size:.86rem; line-height:1.5}
+.item.done .item-text span{color:var(--muted); text-decoration:line-through; text-decoration-color:var(--accent-2)}
+
+.del{flex:none; display:inline-flex; align-items:center; justify-content:center; width:44px; height:44px; padding:0; border-radius:14px; color:var(--muted); border:1.5px solid transparent; background:transparent; cursor:pointer}
+.del:hover{color:var(--accent); background:var(--accent-soft)}
+.del svg{display:block}
+
+.sec-note{margin:0 0 8px; padding:10px 12px; border-radius:14px; background:var(--accent-soft); color:var(--fg); font-size:.88rem; line-height:1.55}
+
+/* Buttons */
+button{font:inherit; font-size:.95rem; font-weight:600; min-height:44px; padding:10px 18px; border-radius:999px; border:1.5px solid var(--accent); background:var(--surface); color:var(--accent); cursor:pointer; transition:background .15s, color .15s}
+button:hover{background:var(--accent-soft)}
+button:focus-visible{outline:3px solid var(--accent-2); outline-offset:2px}
+.btn-primary{background:var(--accent); color:#fff; border-color:var(--accent)}
+.btn-primary:hover{background:var(--accent-hover); color:#fff}
+.ghost{background:transparent; color:var(--muted); border-color:var(--line)}
+.ghost:hover{background:var(--bg); color:var(--fg)}
+.btn-danger{color:#C2415D; border-color:#E8A3B2}
+.btn-danger:hover{background:#FCEAEE}
+.add-open{display:flex; align-items:center; justify-content:center; gap:8px; width:100%; margin-top:12px; border-style:dashed; border-width:2px; border-color:var(--accent); background:transparent}
+.restore{display:flex; justify-content:center; width:100%; margin-top:8px}
+.section-del{display:flex; justify-content:center; margin-top:14px; padding-top:12px; border-top:1px solid var(--line)}
+.section-del button{font-size:.88rem}
+/* No hover change on the delete-section button: it looks the same at rest and on hover */
+.section-del button:hover{background:transparent; color:#C2415D; border-color:#E8A3B2}
+
+.actions{display:flex; justify-content:center; margin:10px 0 0}
+.actions button{font-size:.88rem}
+
+/* Modals */
+dialog{
+  border:none; border-radius:24px; background:var(--surface); color:var(--fg);
+  width:min(420px, calc(100vw - 32px)); max-width:calc(100vw - 32px); padding:0;
+  box-shadow:0 20px 50px rgba(20,25,50,.25);
+}
+dialog::backdrop{background:rgba(15,18,30,.45)}
+.dlg-form{display:grid; gap:10px; padding:22px}
+.dlg-form h2{font-size:1.2rem; margin:0}
+.dlg-sub{color:var(--muted); font-size:.9rem; margin:-4px 0 4px}
+.dlg-form label, .dlg-form legend{font-size:.9rem; font-weight:600; margin-top:4px; padding:0}
+.dlg-form input[type="text"]{font:inherit; width:100%; min-width:0; min-height:46px; padding:10px 14px; border-radius:14px; border:1.5px solid var(--line); background:var(--bg); color:var(--fg)}
+.dlg-form input[type="text"]:focus-visible{outline:3px solid var(--accent-2); outline-offset:1px; border-color:transparent}
+.dlg-error{color:var(--accent); font-size:.88rem; margin:0}
+.dlg-actions{display:flex; justify-content:flex-end; gap:8px; margin-top:8px; flex-wrap:wrap}
+
+fieldset{border:none; margin:0; padding:0; min-width:0}
+.icon-choices{display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:6px}
+.icon-choice{position:relative; display:block}
+.icon-choice input{position:absolute; opacity:0; pointer-events:none; inset:0}
+.icon-choice span{display:flex; flex-direction:column; align-items:center; gap:4px; padding:10px 6px; border:1.5px solid var(--line); border-radius:14px; font-size:.82rem; font-weight:600; cursor:pointer; background:var(--bg); color:var(--muted)}
+.icon-choice input:checked + span{border-color:var(--accent); background:var(--accent-soft); color:var(--accent)}
+.icon-choice input:focus-visible + span{outline:3px solid var(--accent-2); outline-offset:1px}
+
+footer{color:var(--muted); font-size:.84rem; text-align:center; padding:12px 0 24px}
+</style>
+</head>
+<body>
+<main>
+<div class="wrap">
+  <header class="hero">
+    <div class="hero-icon" aria-hidden="true">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l1 12H4z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/><path d="M12 12v4"/><path d="M10 14h4"/></svg>
+    </div>
+    <div>
+      <h1>เช็คลิสต์และของใช้ต่างๆ ก่อนคลอด</h1>
+      <p>ติ๊กของที่เตรียมแล้ว เพิ่มหมวดและรายการของตัวเองได้</p>
+    </div>
+  </header>
+
+  <section class="progress" aria-label="ความคืบหน้า">
+    <div class="progress-top">
+      <div>
+        <div class="progress-label">เตรียมแล้วทั้งหมด</div>
+        <div class="progress-count" id="total-text">0 / 0</div>
+      </div>
+      <div class="progress-pct" id="pct-text">0%</div>
+    </div>
+    <div class="track" role="progressbar" aria-label="ความคืบหน้า" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="track">
+      <div class="fill" id="fill"></div>
+    </div>
+    <p class="done-msg" id="done-msg">เตรียมของครบแล้ว พร้อมไปคลอดค่ะ</p>
+    <p class="save-status" id="save-status" aria-live="polite"></p>
+  </section>
+
+  <div class="note">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01"/><path d="M11 12h1v5h1"/></svg>
+    <div><strong>ก่อนเตรียมของ:</strong> ถามโรงพยาบาลที่ฝากครรภ์ว่ามีอะไรให้แล้วบ้าง เช่น นมผง ผ้าอ้อม หรือชุดเด็ก เพราะแต่ละที่ไม่เหมือนกัน</div>
+  </div>
+
+  <div class="tabs-wrap">
+    <button type="button" class="tab-arrow left" id="tabs-left" aria-label="เลื่อนหมวดไปทางซ้าย" hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <nav class="tabs" id="tabs" role="tablist" aria-label="หมวดหมู่ของที่ต้องเตรียม"></nav>
+    <button type="button" class="tab-arrow right" id="tabs-right" aria-label="เลื่อนหมวดไปทางขวา" hidden>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <button type="button" id="add-section" class="add-open" style="margin:0 0 14px">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+    <span>เพิ่มหมวดหมู่ใหม่</span>
+  </button>
+
+  <div id="panel" role="tabpanel"></div>
+
+  <div class="actions">
+    <button type="button" id="reset" class="ghost">ล้างเครื่องหมายติ๊กทั้งหมด</button>
+  </div>
+</div>
+</main>
+
+<footer>ข้อมูลนี้เป็นแนวทางเบื้องต้น ควรสอบถามโรงพยาบาลของคุณเพิ่มเติม</footer>
+
+<!-- Add-item modal -->
+<dialog id="item-dialog" aria-labelledby="item-dlg-title">
+  <form class="dlg-form" id="item-form" novalidate>
+    <h2 id="item-dlg-title">เพิ่มรายการใหม่</h2>
+    <p class="dlg-sub" id="item-dlg-sub"></p>
+
+    <label for="new-name">ชื่อรายการ</label>
+    <input type="text" id="new-name" maxlength="100" autocomplete="off" placeholder="เช่น ปรอทวัดไข้">
+    <p id="name-error" class="dlg-error" hidden>กรุณาใส่ชื่อรายการ</p>
+
+    <label for="new-hint">หมายเหตุ (ไม่บังคับ)</label>
+    <input type="text" id="new-hint" maxlength="150" autocomplete="off" placeholder="เช่น ซื้อไว้ที่ร้านยาใกล้บ้าน">
+
+    <div class="dlg-actions">
+      <button type="button" class="ghost" data-close>ยกเลิก</button>
+      <button type="submit" class="btn-primary">บันทึก</button>
+    </div>
+  </form>
+</dialog>
+
+<!-- Add-section modal -->
+<dialog id="section-dialog" aria-labelledby="section-dlg-title">
+  <form class="dlg-form" id="section-form" novalidate>
+    <h2 id="section-dlg-title">เพิ่มหมวดใหม่</h2>
+
+    <label for="sec-title">ชื่อหมวด</label>
+    <input type="text" id="sec-title" maxlength="60" autocomplete="off" placeholder="เช่น ของใช้เด็กเล็ก">
+    <p id="sec-error" class="dlg-error" hidden>กรุณาใส่ชื่อหมวด</p>
+
+    <fieldset>
+      <legend>เลือกไอคอน</legend>
+      <div class="icon-choices" id="icon-choices"></div>
+    </fieldset>
+
+    <div class="dlg-actions">
+      <button type="button" class="ghost" data-close>ยกเลิก</button>
+      <button type="submit" class="btn-primary">เพิ่มหมวด</button>
+    </div>
+  </form>
+</dialog>
+
+<script>
+// Icon artwork (inner SVG markup, drawn on a 24x24 grid).
+const ICONS = {
+  doc:    '<path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4"/><path d="M9 13h6"/><path d="M9 17h6"/>',
+  heart:  '<path d="M12 20s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.5-7 10-7 10z"/>',
+  baby:   '<circle cx="12" cy="13" r="6"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="7" r="2.5"/><path d="M10 13h.01"/><path d="M14 13h.01"/>',
+  people: '<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3 3-5 6-5s6 2 6 5"/><circle cx="17" cy="9" r="2.5"/><path d="M15 20c0-2 1-4 3-4"/>',
+  bag:    '<path d="M5 8h14l1 12H4z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/>',
+  star:   '<path d="M12 4l2.4 5 5.4.6-4 3.7 1.1 5.3L12 16l-4.9 2.6 1.1-5.3-4-3.7 5.4-.6z"/>'
+};
+const ICON_LABELS = { doc: "เอกสาร", heart: "หัวใจ", baby: "เด็ก", people: "คน", bag: "กระเป๋า", star: "ดาว" };
+const TRASH_ICON = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 6h18"/><path d="M8 6V4h8v2"/><path d="M19 6l-1 14H6L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/></svg>';
+const PLUS_ICON = '<path d="M12 5v14"/><path d="M5 12h14"/>';
+
+// Starter sections shown on first visit. The user can add, rename-by-recreate, and delete them.
+const DEFAULT_SECTIONS = [
+  { id: "docs", title: "เอกสารสำคัญ", icon: "doc", items: [
+    ["บัตรประชาชนของแม่", "และของพ่อ หรือผู้ดูแลที่จะเซ็นเอกสาร"],
+    ["สมุดฝากครรภ์", "พร้อมผลตรวจและใบนัดล่าสุด"],
+    ["บัตรสิทธิการรักษา", "บัตรทอง ประกันสังคม หรือประกันเอกชน พร้อมกรมธรรม์"],
+    ["ใบส่งตัว หรือใบนัดจากโรงพยาบาล", "ถ้ามี"],
+    ["เงินสดหรือบัตรสำหรับค่าใช้จ่ายเล็กน้อย", "ตรวจสอบค่าใช้จ่ายกับโรงพยาบาลก่อน"]
+  ]},
+  { id: "mom", title: "ของแม่", icon: "heart", items: [
+    ["ชุดนอนหรือเสื้อคลุมหลวม ๆ", "2–3 ชุด เปิดให้นมได้สะดวก"],
+    ["เสื้อชั้นในให้นม", "2–3 ตัว"],
+    ["กางเกงในทรงใหญ่", "ใส่สบาย ไม่รัดหน้าท้อง"],
+    ["แผ่นซับน้ำคาวปลา หรือผ้าอนามัยไซส์ใหญ่", "เตรียมหลายแพ็ค"],
+    ["ที่รัดหน้าท้อง", "ถ้าแพทย์แนะนำ"],
+    ["ครีมทาหัวนม หรือแผ่นซับหัวนม", "ช่วยลดการเจ็บตอนให้นม"],
+    ["ที่ปั๊มนม และขวดเก็บน้ำนม", "ถ้าจะปั๊มนมหรือให้คนอื่นป้อน"],
+    ["ผ้าขนหนูและรองเท้าแตะ", "สำหรับใช้ในโรงพยาบาล"],
+    ["ของใช้อาบน้ำ", "สบู่ แชมพู ยาสีฟัน แปรงสีฟัน ผ้าเช็ดตัว"],
+    ["ยาประจำตัวและยาที่แพทย์สั่ง", "พร้อมรายการยาที่กินอยู่"],
+    ["หมอนรองให้นมหรือหมอนเล็ก", "ถ้าใช้เป็นประจำ"],
+    ["ของกินเบา ๆ และน้ำดื่ม", "ช่วงที่ยังไม่อยากอาหาร"],
+    ["สายชาร์จโทรศัพท์และแบตสำรอง", "ใช้บ่อยกว่าที่คิด"]
+  ]},
+  { id: "baby", title: "ของลูก", icon: "baby", items: [
+    ["เสื้อผ้าเด็กแรกเกิด", "3–4 ชุด ไซส์ NB หรือ S เลือกแบบเปิดง่าย"],
+    ["ชุดกลับบ้าน", "เตรียมไว้อีก 1 ชุด เผื่อเปื้อน"],
+    ["ผ้าอ้อมเด็กแรกเกิด", "เตรียมตามคำแนะนำของโรงพยาบาล"],
+    ["ผ้าห่อตัวหรือผ้าอ้อมผืนใหญ่", "2–3 ผืน"],
+    ["หมวก ถุงมือ และถุงเท้า", "สำหรับกันหนาวและกันข่วน"],
+    ["ทิชชู่เปียกและสำลี", "สำหรับเช็ดตัวและเช็ดก้น"],
+    ["คาร์ซีท", "ติดตั้งให้เรียบร้อยก่อนวันคลอด"],
+    ["นมผงหรือขวดนม", "ถ้าโรงพยาบาลไม่มีให้ หรือจำเป็นต้องใช้"]
+  ]},
+  { id: "care", title: "ของคู่ชีวิตหรือผู้ดูแล", icon: "people", items: [
+    ["เสื้อผ้าและของใช้ส่วนตัว", "สำหรับพักค้างคืนที่โรงพยาบาล"],
+    ["ของกินและเครื่องดื่ม", "ไว้ตอนรอคลอดหรืออยู่ดูแล"],
+    ["หมอนและผ้าห่มผืนเล็ก", "สำหรับนอนเฝ้า"],
+    ["ที่ชาร์จโทรศัพท์และหูฟัง", "ไว้ฆ่าเวลาระหว่างรอ"],
+    ["สมุดจดหรือที่บันทึกคำแนะนำ", "จดเวลาให้นม การขับถ่าย และคำถามที่อยากถาม"]
+  ]}
+];
+
+// Birth-registration sections, added once to every saved state (existing and new).
+const EXTRA_SECTIONS = [
+  { id: "birth-reg", title: "แจ้งเกิดเข้าบ้าน", icon: "doc", items: [
+    ["สำเนาบัตรประชาชน พ่อ", "2 ชุด"],
+    ["สำเนาบัตรประชาชน แม่", "2 ชุด"],
+    ["สำเนาทะเบียนบ้านพ่อ", "2 ชุด"],
+    ["สำเนาทะเบียนบ้านแม่", "2 ชุด"],
+    ["สำเนาสมรส", "2 ชุด (ถ้ามี)"],
+    ["สำเนาทะเบียน (เจ้าบ้าน)", ""],
+    ["ทะเบียนบ้านตัวจริง", ""],
+    ["หนังสือรับรองการเกิด", ""],
+    ["บัตรประชาชนผู้แจ้งเกิด", ""]
+  ]},
+  { id: "birth-doc", title: "เอกสารแจ้งคลอด", icon: "baby", items: [
+    ["สมุดเล่มสีชมพู", ""],
+    ["สำเนาบัตรประชาชน พ่อ", "2 ชุด"],
+    ["สำเนาบัตรประชาชน แม่", "2 ชุด"],
+    ["สำเนาทะเบียนบ้านพ่อ", "2 ชุด"],
+    ["สำเนาทะเบียนบ้านแม่", "2 ชุด"],
+    ["สำเนาสมรส", "2 ชุด (ถ้ามี)"],
+    ["ใบเปลี่ยนชื่อ-สกุล", "ถ้ามี"]
+  ]},
+  { id: "bag-baby", title: "กระเป๋าไปโรงพยาบาล (ทารก)", icon: "baby",
+    note: "แนะนำให้จัดใส่กระเป๋าแยกไว้ล่วงหน้าช่วงอายุครรภ์ 34–36 สัปดาห์ ส่วนเสื้อผ้าและผ้าห่อตัวที่ใช้ตอนนอนพักฟื้น โรงพยาบาลส่วนใหญ่จะมีให้ใช้ตลอดช่วงที่พักอยู่", items: [
+    ["ชุดใส่กลับบ้าน", "1–2 ชุด เสื้อผูกหน้าแขนยาว และกางเกงหรือขาผูกที่หลวม ผ้าคอตตอนนุ่ม"],
+    ["ผ้าห่อตัว", "1–2 ผืน ผ้าสำลีหรือผ้ามัสลินผืนใหญ่ สำหรับห่อตัวตอนออกจาก รพ."],
+    ["หมวก ถุงมือ ถุงเท้า", "1–2 ชุด ช่วยรักษาความอบอุ่น"],
+    ["ผ้าอ้อมสำเร็จรูป ไซส์ NB", "1 แพ็คเล็ก บาง รพ. มีแจกในแพ็กเกจ แต่ควรเตรียมเผื่อ 10–15 ชิ้น"],
+    ["ผ้าอ้อมผ้า", "3–5 ผืน สำหรับรองอุ้ม เช็ดน้ำลาย หรือเช็ดนม"],
+    ["ทิชชู่เปียกสูตรน้ำบริสุทธิ์ 99% ขึ้นไป", "1 ห่อ เหมาะกับเด็กแรกเกิด"],
+    ["คาร์ซีทสำหรับทารกแรกเกิด", "ติดตั้งในรถไว้ก่อนวันเดินทางกลับบ้าน สำคัญมากเพื่อความปลอดภัย"]
+  ]},
+  { id: "home-feed", title: "กลับบ้าน: การกิน", icon: "heart", items: [
+    ["ผ้าอ้อมผ้า ขนาด 27×27 หรือ 30×30 นิ้ว", "1–2 โหล ใช้พาดบ่า พับรองอุ้ม หรือเช็ดปาก"],
+    ["ผ้าเช็ดลิ้นหรือผ้าก๊อซสเตอไรล์", "ใช้เช็ดทำความสะอาดช่องปากและลิ้นหลังกินนม"],
+    ["เครื่องปั๊มนมและถุงเก็บน้ำนม", "สำหรับคุณแม่ที่ตั้งใจให้นมแม่หรือปั๊มล้วน"],
+    ["ขวดนมและจุกนมไซส์ S/SS", "4–6 ขวด เผื่อกรณีต้องเสริมนมหรือให้นมแม่ผ่านขวด"],
+    ["น้ำยาล้างขวดนมและแปรงล้างขวด", "เลือกสูตรออร์แกนิกหรืออ่อนโยน"],
+    ["เครื่องนึ่งหรืออบขวดนม", "หรือต้มในน้ำเดือดเพื่อฆ่าเชื้อ"],
+    ["หมอนรองให้นม", "ช่วยผ่อนแรงแขนและหลังของคุณแม่"]
+  ]},
+  { id: "home-clothes", title: "กลับบ้าน: เสื้อผ้า", icon: "star", items: [
+    ["เสื้อผูกหน้า แขนสั้นหรือแขนยาว", "6–10 ตัว สวมง่าย ไม่ต้องสวมทางหัว"],
+    ["กางเกงหรือชุดหมี", "6–8 ตัว"],
+    ["ถุงมือและถุงเท้า", "4–6 คู่ ป้องกันเด็กข่วนหน้าและรักษาความอบอุ่น"],
+    ["หมวกไหมพรมหรือผ้าคอตตอน", "2–3 ใบ"],
+    ["น้ำยาซักผ้าเด็ก", "เลือกสูตรอ่อนโยนสำหรับเด็กแรกเกิดโดยเฉพาะ"]
+  ]},
+  { id: "home-bath", title: "กลับบ้าน: อาบน้ำและทำความสะอาด", icon: "bag", items: [
+    ["อ่างอาบน้ำเด็ก", "แบบมีที่รองนอนหรือตาข่าย สะดวกในการอาบ"],
+    ["สบู่เหลวอาบน้ำและสระผม", "สูตรอ่อนโยน ไม่ระคายเคืองตา"],
+    ["ผ้าเช็ดตัวเด็ก", "3–4 ผืน ผ้านุ่ม"],
+    ["สำลีก้อนและสำลีแผ่น", "ชนิดสเตอไรล์ ใช้เช็ดตา เช็ดก้น และทำความสะอาดสายสะดือ"],
+    ["คอตตอนบัด", "ไซส์เล็กพิเศษสำหรับซอกหูและจมูก และไซส์ปกติสำหรับสายสะดือ"],
+    ["แอลกอฮอล์ 70% หรือน้ำยาเช็ดสะดือ", "ส่วนใหญ่ รพ. จะให้กลับบ้านมาด้วย"],
+    ["ทิชชู่เปียกสูตรน้ำบริสุทธิ์", "3–4 ห่อใหญ่"],
+    ["ครีมทากันผื่นผ้าอ้อม", "เช่น Sudocrem หรือ Zinc Ointment ทาป้องกันผื่นแดงบริเวณข้อพับและก้น"]
+  ]},
+  { id: "home-sleep", title: "กลับบ้าน: การนอน", icon: "baby", items: [
+    ["เบาะนอนหรือเตียงเด็ก", "แน่นพอดี ไม่บุ๋มลึก เพื่อลดความเสี่ยง SIDS"],
+    ["ผ้าห่มนุ่มหรือถุงนอนเด็ก", "2–3 ผืน หลีกเลี่ยงตุ๊กตาหรือหมอนหนาในเตียงเด็ก"],
+    ["ผ้ารองกันฉี่หรือแผ่นรองกันน้ำ", "2–3 ผืน"],
+    ["โคมไฟสีส้มดวงเล็ก", "เปิดตอนให้นมหรือเปลี่ยนผ้าอ้อมกลางคืน โดยไม่ต้องเปิดไฟสว่างทั้งห้อง"]
+  ]},
+  { id: "home-health", title: "กลับบ้าน: สุขภาพ", icon: "doc", items: [
+    ["ปรอทวัดไข้ดิจิทัล", "แบบวัดทางหน้าผากหรือหู หรือแบบหนีบรักแร้"],
+    ["มหาหิงคุ์หรือมหาหิงคุ์เจล", "ทาบรรเทาอาการท้องอืด"],
+    ["ลูกยางแดงหรือเครื่องดูดน้ำมูก", "ช่วยดูดน้ำมูกเวลาลูกแน่นจมูก"],
+    ["น้ำเกลือล้างจมูก (Normal Saline 0.9%)", "ใช้หยดหรือเช็ดทำความสะอาดจมูก"],
+    ["กรรไกรตัดเล็บเด็ก", "แบบหัวมน หรือตะไบเล็บไฟฟ้าสำหรับเด็กแรกเกิด"]
+  ]},
+  { id: "claim-doc", title: "เอกสารแจ้งคลอด (สิทธิ์เบิกเงิน)", icon: "doc",
+    note: "ค่าเงินที่ระบุไว้ในรายการนี้มีทั้ง 800 บาท/เดือน (สงเคราะห์บุตร) และ 600 บาท/เดือน (อุดหนุนบุตร) ควรตรวจยอดและเงื่อนไขกับสำนักงานประกันสังคมหรือหน่วยงานที่เกี่ยวข้องก่อนยื่นเอกสาร", items: [
+    ["แบบฟอร์มสปส. 2-01 เบิกค่าคลอด", "1 ชุด · 15,000 บาท"],
+    ["แบบฟอร์มสปส. 2-01 เบิกเงินสงเคราะห์บุตร", "1 ชุด · 800 บาท/เดือน"],
+    ["แบบฟอร์มสปส. 2-01 เบิกค่าฝากครรภ์", "1 ชุด · 1,500 บาท"],
+    ["ใบเสร็จและใบรับรองแพทย์ที่ฝากครรภ์", "5 ครั้ง"],
+    ["สำเนาบัตรประชาชนแม่", "3 ชุด"],
+    ["สำเนาสูติบัตรลูก", "3 ชุด"],
+    ["สำเนาบัญชีออมทรัพย์", "3 ชุด"],
+    ["บัตรประชาชนตัวจริง", "ผู้ใช้สิทธิ์"],
+    ["สำเนาบัตรประชาชนพ่อ", "3 ชุด · กรณีใช้สิทธิ์พ่อ"],
+    ["สำเนาทะเบียนสมรส", "3 ชุด · กรณีใช้สิทธิ์พ่อ"],
+    ["แบบฟอร์มคำร้อง ดร.1", ""],
+    ["แบบฟอร์มคำร้อง ดร.2", ""],
+    ["สำเนาบัตรประชาชนผู้ปกครอง", "1 ชุด"],
+    ["สำเนาสูติบัตรบุตร", "1 ชุด"],
+    ["ใบสูติบัตรตัวจริง", ""],
+    ["สมุดธนาคารกรุงไทย", ""],
+    ["สำเนาหน้าสมุดธนาคารกรุงไทย", ""]
+  ]}
+];
+
+// Adds each built-in extra section once. seededIds remembers which ones were already offered,
+// so a section the user deleted doesn't come back on the next visit.
+function addExtraSections() {
+  if (!Array.isArray(state.seededIds)) {
+    state.seededIds = state.extraSeeded ? ["birth-reg", "birth-doc"] : [];
+  }
+  EXTRA_SECTIONS.forEach(sec => {
+    if (state.seededIds.includes(sec.id)) return;
+    state.seededIds.push(sec.id);
+    if (getSection(sec.id)) return;
+    const copy = {
+      id: sec.id,
+      title: sec.title,
+      icon: sec.icon,
+      items: sec.items.map(([name, hint], ii) => ({ id: sec.id + "-" + ii, name, hint }))
+    };
+    if (sec.note) copy.note = sec.note;
+    state.sections.push(copy);
+  });
+  state.extraSeeded = true;
+  persist();
+}
+
+const STATE_KEY = "hospital-bag-state-v2";
+const V1 = { checked: "hospital-bag-v1", custom: "hospital-bag-custom-v1", hidden: "hospital-bag-hidden-v1" };
+
+// state = { sections: [{ id, title, icon, items: [{ id, name, hint }] }], checked: { itemId: true }, trash: [{ sectionId, index, item }] }
+
+function loadJSON(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
+  }
+}
+
+function newId(prefix) {
+  return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+}
+
+function freshState() {
+  return {
+    sections: DEFAULT_SECTIONS.map(s => ({
+      id: s.id,
+      title: s.title,
+      icon: s.icon,
+      items: s.items.map(([name, hint], ii) => ({ id: s.id + "-" + ii, name, hint }))
+    })),
+    checked: {},
+    trash: []
+  };
+}
+
+// Carry over data from the earlier version (index-based ids) so nothing the user already ticked is lost.
+function migrateV1() {
+  const st = freshState();
+  const oldChecked = loadJSON(V1.checked);
+  const oldCustom = loadJSON(V1.custom);
+  const oldHidden = loadJSON(V1.hidden);
+  const hasOld = Object.keys(oldChecked).length || Object.keys(oldCustom).length || Object.keys(oldHidden).length;
+  if (!hasOld) return st;
+
+  st.sections.forEach((sec, si) => {
+    const kept = [];
+    sec.items.forEach((it, ii) => {
+      const oldId = "s" + si + "-i" + ii;
+      if (oldHidden[oldId]) {
+        st.trash.push({ sectionId: sec.id, index: ii, item: it });
+        return;
+      }
+      kept.push(it);
+      if (oldChecked[oldId]) st.checked[it.id] = true;
+    });
+    (oldCustom[si] || []).forEach(c => {
+      kept.push({ id: c.id, name: c.name, hint: c.hint });
+      if (oldChecked[c.id]) st.checked[c.id] = true;
+    });
+    sec.items = kept;
+  });
+  return st;
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STATE_KEY);
+    if (raw) {
+      const s = JSON.parse(raw);
+      if (s && Array.isArray(s.sections)) return s;
+    }
+  } catch (e) {}
+  return migrateV1();
+}
+
+// Whether the browser lets this page write to localStorage (private mode or blocked storage can refuse).
+let storageOK = true;
+
+function canUseStorage() {
+  try {
+    localStorage.setItem("__hospital-bag-test", "1");
+    localStorage.removeItem("__hospital-bag-test");
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
+function persist() {
+  try {
+    localStorage.setItem(STATE_KEY, JSON.stringify(state));
+    storageOK = true;
+  } catch (e) {
+    storageOK = false;
+  }
+}
+
+let state = loadState();
+addExtraSections();
+let activeId = state.sections.length ? state.sections[0].id : null;
+
+const tabsEl = document.getElementById("tabs");
+const panelEl = document.getElementById("panel");
+const totalText = document.getElementById("total-text");
+const pctText = document.getElementById("pct-text");
+const doneMsg = document.getElementById("done-msg");
+const fill = document.getElementById("fill");
+const track = document.getElementById("track");
+const resetBtn = document.getElementById("reset");
+const statusEl = document.getElementById("save-status");
+
+const itemDialog = document.getElementById("item-dialog");
+const itemForm = document.getElementById("item-form");
+const itemDlgSub = document.getElementById("item-dlg-sub");
+const nameInput = document.getElementById("new-name");
+const hintInput = document.getElementById("new-hint");
+const nameError = document.getElementById("name-error");
+
+const sectionDialog = document.getElementById("section-dialog");
+const sectionForm = document.getElementById("section-form");
+const secTitleInput = document.getElementById("sec-title");
+const secError = document.getElementById("sec-error");
+const iconChoicesEl = document.getElementById("icon-choices");
+
+function svgIcon(inner, size) {
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + inner + '</svg>';
+}
+
+function getSection(id) {
+  return state.sections.find(s => s.id === id);
+}
+
+function activeSection() {
+  let sec = getSection(activeId);
+  if (!sec && state.sections.length) {
+    sec = state.sections[0];
+    activeId = sec.id;
+  }
+  return sec;
+}
+
+function countSection(sec) {
+  let done = 0;
+  sec.items.forEach(it => { if (state.checked[it.id]) done++; });
+  return { done, total: sec.items.length };
+}
+
+function renderTabs() {
+  tabsEl.textContent = "";
+  state.sections.forEach(sec => {
+    const { done, total } = countSection(sec);
+    const selected = sec.id === activeId;
+
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "tab";
+    btn.id = "tab-" + sec.id;
+    btn.setAttribute("role", "tab");
+    btn.setAttribute("aria-selected", String(selected));
+    btn.setAttribute("aria-controls", "panel");
+    btn.tabIndex = selected ? 0 : -1;
+
+    const icon = document.createElement("span");
+    icon.className = "tab-icon";
+    icon.innerHTML = svgIcon(ICONS[sec.icon] || ICONS.doc, 16);
+
+    const name = document.createElement("span");
+    name.textContent = sec.title;
+
+    const cnt = document.createElement("span");
+    cnt.className = "tab-count";
+    cnt.textContent = done + "/" + total;
+
+    btn.append(icon, name, cnt);
+    btn.addEventListener("click", () => {
+      activeId = sec.id;
+      render();
+    });
+    tabsEl.appendChild(btn);
+  });
+
+  const addTab = document.createElement("button");
+  addTab.type = "button";
+  addTab.className = "tab tab-add";
+  addTab.innerHTML = svgIcon(PLUS_ICON, 16) + "<span>หมวดใหม่</span>";
+  addTab.addEventListener("click", () => openSectionDialog(addTab));
+  tabsEl.appendChild(addTab);
+
+  // Bring the selected tab into view only when the selection changes,
+  // so the user's own scrolling isn't reset on every tick.
+  if (activeId !== lastScrolledId) {
+    const sel = tabsEl.querySelector('[aria-selected="true"]');
+    if (sel) sel.scrollIntoView({ inline: "nearest", block: "nearest" });
+    lastScrolledId = activeId;
+  }
+  updateTabArrows();
+}
+
+function buildItemRow(sec, it) {
+  const row = document.createElement("div");
+  row.className = "row";
+
+  const isOn = !!state.checked[it.id];
+
+  const label = document.createElement("label");
+  label.className = "item" + (isOn ? " done" : "");
+  label.htmlFor = it.id;
+
+  const box = document.createElement("input");
+  box.type = "checkbox";
+  box.id = it.id;
+  box.checked = isOn;
+  box.addEventListener("change", () => {
+    state.checked[it.id] = box.checked;
+    persist();
+    render();
+  });
+
+  const text = document.createElement("div");
+  text.className = "item-text";
+  const span = document.createElement("span");
+  span.textContent = it.name;
+  text.appendChild(span);
+  if (it.hint) {
+    const small = document.createElement("small");
+    small.textContent = it.hint;
+    text.appendChild(small);
+  }
+
+  label.append(box, text);
+  row.appendChild(label);
+
+  const del = document.createElement("button");
+  del.type = "button";
+  del.className = "del";
+  del.title = "ลบรายการ";
+  del.setAttribute("aria-label", "ลบ " + it.name);
+  del.innerHTML = TRASH_ICON;
+  del.addEventListener("click", () => {
+    const idx = sec.items.indexOf(it);
+    if (idx >= 0) {
+      sec.items.splice(idx, 1);
+      state.trash.push({ sectionId: sec.id, index: idx, item: it });
+    }
+    delete state.checked[it.id];
+    persist();
+    render();
+  });
+  row.appendChild(del);
+
+  return row;
+}
+
+function renderPanel() {
+  panelEl.textContent = "";
+  const sec = activeSection();
+
+  if (!sec) {
+    const card = document.createElement("section");
+    card.className = "card";
+    const empty = document.createElement("p");
+    empty.className = "empty";
+    empty.textContent = "ยังไม่มีหมวด กดปุ่ม \"หมวดใหม่\" เพื่อเริ่มเตรียมของ";
+    card.appendChild(empty);
+    panelEl.appendChild(card);
+    return;
+  }
+
+  panelEl.setAttribute("aria-labelledby", "tab-" + sec.id);
+
+  const card = document.createElement("section");
+  card.className = "card";
+
+  const { done, total } = countSection(sec);
+  const head = document.createElement("div");
+  head.className = "card-head";
+  const h = document.createElement("h2");
+  h.textContent = sec.title;
+  const sub = document.createElement("span");
+  sub.className = "head-sub";
+  sub.textContent = total ? (done === total ? "ครบแล้ว" : "เหลืออีก " + (total - done) + " รายการ") : "ยังไม่มีรายการ";
+  head.append(h, sub);
+  card.appendChild(head);
+
+  if (sec.note) {
+    const note = document.createElement("p");
+    note.className = "sec-note";
+    note.textContent = sec.note;
+    card.appendChild(note);
+  }
+
+  sec.items.forEach(it => card.appendChild(buildItemRow(sec, it)));
+
+  // Bring back items this section lost to the trash icon.
+  const trashed = state.trash
+    .filter(t => t.sectionId === sec.id)
+    .sort((a, b) => a.index - b.index);
+  if (trashed.length > 0) {
+    const restoreWrap = document.createElement("div");
+    restoreWrap.className = "restore";
+    const restoreBtn = document.createElement("button");
+    restoreBtn.type = "button";
+    restoreBtn.className = "ghost";
+    restoreBtn.textContent = "กู้คืนรายการที่ลบไว้ (" + trashed.length + ")";
+    restoreBtn.addEventListener("click", () => {
+      trashed.forEach(t => {
+        sec.items.splice(Math.min(t.index, sec.items.length), 0, t.item);
+      });
+      state.trash = state.trash.filter(t => t.sectionId !== sec.id);
+      persist();
+      render();
+    });
+    restoreWrap.appendChild(restoreBtn);
+    card.appendChild(restoreWrap);
+  }
+
+  const addBtn = document.createElement("button");
+  addBtn.type = "button";
+  addBtn.className = "add-open";
+  addBtn.innerHTML = svgIcon(PLUS_ICON, 18) + "<span>เพิ่มรายการในหมวดนี้</span>";
+  addBtn.addEventListener("click", () => openItemDialog(sec, addBtn));
+  card.appendChild(addBtn);
+
+  // Deleting a whole section needs two taps, and is only offered when another section remains.
+  if (state.sections.length > 1) {
+    const footer = document.createElement("div");
+    footer.className = "section-del";
+    const delSec = document.createElement("button");
+    delSec.type = "button";
+    delSec.className = "ghost btn-danger";
+    delSec.textContent = "ลบหมวดนี้";
+    let armed = false;
+    delSec.addEventListener("click", () => {
+      if (!armed) {
+        armed = true;
+        delSec.textContent = "กดอีกครั้งเพื่อลบหมวดและรายการทั้งหมด";
+        setTimeout(() => {
+          armed = false;
+          delSec.textContent = "ลบหมวดนี้";
+        }, 4000);
+        return;
+      }
+      const idx = state.sections.indexOf(sec);
+      sec.items.forEach(it => { delete state.checked[it.id]; });
+      state.trash = state.trash.filter(t => t.sectionId !== sec.id);
+      state.sections = state.sections.filter(s => s.id !== sec.id);
+      const next = state.sections[Math.max(0, Math.min(idx, state.sections.length - 1))];
+      activeId = next ? next.id : null;
+      persist();
+      render();
+    });
+    footer.appendChild(delSec);
+    card.appendChild(footer);
+  }
+
+  panelEl.appendChild(card);
+}
+
+// The modals return focus to whatever opened them.
+let lastOpener = null;
+
+function openDialog(dlg, opener, focusEl) {
+  lastOpener = opener || null;
+  if (dlg.open) return;
+  if (typeof dlg.showModal === "function") {
+    dlg.showModal();
+  } else {
+    // Fallback for browsers without <dialog>.showModal
+    dlg.setAttribute("open", "");
+  }
+  if (focusEl) focusEl.focus();
+}
+
+function openItemDialog(sec, opener) {
+  itemForm.dataset.sectionId = sec.id;
+  itemDlgSub.textContent = "หมวด: " + sec.title;
+  nameInput.value = "";
+  hintInput.value = "";
+  nameError.hidden = true;
+  nameInput.setAttribute("aria-invalid", "false");
+  openDialog(itemDialog, opener, nameInput);
+}
+
+function openSectionDialog(opener) {
+  sectionForm.reset();
+  secError.hidden = true;
+  secTitleInput.setAttribute("aria-invalid", "false");
+  iconChoicesEl.textContent = "";
+  Object.keys(ICONS).forEach((key, i) => {
+    const label = document.createElement("label");
+    label.className = "icon-choice";
+    const input = document.createElement("input");
+    input.type = "radio";
+    input.name = "icon";
+    input.value = key;
+    input.checked = i === 0;
+    const span = document.createElement("span");
+    span.innerHTML = svgIcon(ICONS[key], 22) + "<span>" + ICON_LABELS[key] + "</span>";
+    label.append(input, span);
+    iconChoicesEl.appendChild(label);
+  });
+  openDialog(sectionDialog, opener, secTitleInput);
+}
+
+// Close buttons and a click on the dimmed area both dismiss without saving.
+document.querySelectorAll("dialog [data-close]").forEach(btn => {
+  btn.addEventListener("click", () => btn.closest("dialog").close());
+});
+[itemDialog, sectionDialog].forEach(dlg => {
+  dlg.addEventListener("click", (e) => {
+    if (e.target === dlg) dlg.close();
+  });
+  dlg.addEventListener("close", () => {
+    if (lastOpener && document.contains(lastOpener)) lastOpener.focus();
+    lastOpener = null;
+  });
+});
+
+itemForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const name = nameInput.value.trim();
+  if (!name) {
+    nameError.hidden = false;
+    nameInput.setAttribute("aria-invalid", "true");
+    nameInput.focus();
+    return;
+  }
+  const sec = getSection(itemForm.dataset.sectionId);
+  if (sec) {
+    sec.items.push({ id: newId("i"), name, hint: hintInput.value.trim() });
+    persist();
+  }
+  itemDialog.close();
+  render();
+});
+
+sectionForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const title = secTitleInput.value.trim();
+  if (!title) {
+    secError.hidden = false;
+    secTitleInput.setAttribute("aria-invalid", "true");
+    secTitleInput.focus();
+    return;
+  }
+  const checkedRadio = sectionForm.querySelector('input[name="icon"]:checked');
+  const icon = checkedRadio ? checkedRadio.value : "doc";
+  const id = newId("s");
+  state.sections.push({ id, title, icon, items: [] });
+  activeId = id;
+  persist();
+  sectionDialog.close();
+  render();
+});
+
+function renderTotals() {
+  let total = 0, done = 0;
+  state.sections.forEach(sec => {
+    const c = countSection(sec);
+    total += c.total;
+    done += c.done;
+  });
+  const pct = total ? Math.round((done / total) * 100) : 0;
+  totalText.textContent = done + " / " + total + " รายการ";
+  pctText.textContent = pct + "%";
+  fill.style.width = pct + "%";
+  track.setAttribute("aria-valuenow", String(pct));
+  doneMsg.classList.toggle("show", total > 0 && done === total);
+}
+
+function renderStatus() {
+  if (storageOK) {
+    statusEl.textContent = "บันทึกอัตโนมัติในเบราว์เซอร์นี้แล้ว";
+    statusEl.classList.remove("warn");
+  } else {
+    statusEl.textContent = "เบราว์เซอร์นี้ไม่ให้บันทึกข้อมูล ข้อมูลจะหายเมื่อปิดหน้า (ลองปิดโหมดส่วนตัวหรือเปิดในเบราว์เซอร์ปกติ)";
+    statusEl.classList.add("warn");
+  }
+}
+
+function render() {
+  renderTabs();
+  renderPanel();
+  renderTotals();
+  renderStatus();
+}
+
+// Clears only the checkmarks; sections and items stay.
+let confirming = false;
+resetBtn.addEventListener("click", () => {
+  if (!confirming) {
+    confirming = true;
+    resetBtn.textContent = "กดอีกครั้งเพื่อล้างเครื่องหมายติ๊ก";
+    setTimeout(() => { confirming = false; resetBtn.textContent = "ล้างเครื่องหมายติ๊กทั้งหมด"; }, 4000);
+    return;
+  }
+  confirming = false;
+  resetBtn.textContent = "ล้างเครื่องหมายติ๊กทั้งหมด";
+  state.checked = {};
+  persist();
+  render();
+});
+
+document.getElementById("add-section").addEventListener("click", (e) => {
+  openSectionDialog(e.currentTarget);
+});
+
+const tabsLeftBtn = document.getElementById("tabs-left");
+const tabsRightBtn = document.getElementById("tabs-right");
+let lastScrolledId = null;
+
+function updateTabArrows() {
+  const max = tabsEl.scrollWidth - tabsEl.clientWidth;
+  const overflow = max > 2;
+  tabsLeftBtn.hidden = !overflow || tabsEl.scrollLeft <= 2;
+  tabsRightBtn.hidden = !overflow || tabsEl.scrollLeft >= max - 2;
+}
+
+tabsEl.addEventListener("scroll", updateTabArrows, { passive: true });
+window.addEventListener("resize", updateTabArrows);
+tabsLeftBtn.addEventListener("click", () => tabsEl.scrollBy({ left: -180, behavior: "smooth" }));
+tabsRightBtn.addEventListener("click", () => tabsEl.scrollBy({ left: 180, behavior: "smooth" }));
+
+storageOK = canUseStorage();
+render();
+</script>
+</body>
+</html>
